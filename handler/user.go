@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"crowdfunding-api/constant"
 	"crowdfunding-api/helper"
 	"crowdfunding-api/user"
 
@@ -21,15 +22,34 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
-		helper.BadRequestResponse(c, "Create user gagal", err.Error())
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
 		return
 	}
 
 	user, err := h.userService.RegisterUser(input)
 	if err != nil {
-		helper.BadRequestResponse(c, "Create user gagal", err.Error())
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
 		return
 	}
 
 	helper.SuccessResponse(c, "Create user success", user)
+}
+
+func (h *userHandler) Login(c *gin.Context) {
+	var input user.LoginInput
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		helper.ErrorResponse(c, constant.LoginFailed, err.Error())
+		return
+	}
+
+	user, err := h.userService.Login(input)
+	if err != nil {
+		helper.ErrorResponse(c, constant.LoginFailed, err.Error())
+		return
+	}
+
+	helper.SuccessResponse(c, "Successfully Login", user)
 }

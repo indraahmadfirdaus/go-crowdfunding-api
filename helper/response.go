@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"crowdfunding-api/constant"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,11 +31,11 @@ func SuccessResponse(c *gin.Context, message string, data interface{}) {
 	c.JSON(http.StatusOK, jsonRes)
 }
 
-func BadRequestResponse(c *gin.Context, message string, data interface{}) {
+func ErrorResponse(c *gin.Context, exception constant.Exception, data interface{}) {
 	meta := Meta{
-		Message: message,
+		Message: exception.Message,
 		Status:  "fail",
-		Code:    http.StatusBadRequest,
+		Code:    exception.StatusCode,
 	}
 	jsonRes := Response{
 		Meta: meta,
