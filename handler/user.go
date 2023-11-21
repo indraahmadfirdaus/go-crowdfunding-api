@@ -4,6 +4,7 @@ import (
 	"crowdfunding-api/constant"
 	"crowdfunding-api/helper"
 	"crowdfunding-api/user"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,4 +53,62 @@ func (h *userHandler) Login(c *gin.Context) {
 	}
 
 	helper.SuccessResponse(c, "Successfully Login", user)
+}
+
+func (h *userHandler) CheckEmailAvailability(c *gin.Context) {
+	var input user.CheckEmailInput
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
+		return
+	}
+
+	resp, err := h.userService.CheckEmail(input)
+	if err != nil {
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
+		return
+	}
+
+	var message string
+	if resp == false {
+		message = "Email not available"
+	} else {
+		message = "Email available"
+	}
+
+	helper.SuccessResponse(c, message, resp)
+}
+
+func (h *userHandler) UpdateAvatar(c *gin.Context) {
+
+	file, err := c.FormFile("avatar")
+
+	if err != nil {
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
+		return
+	}
+
+	userID := 1
+
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+
+	err = c.SaveUploadedFile(file, path)
+
+	if err != nil {
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
+		return
+	}
+
+	_, err = h.userService.UpdateAvatar(userID, path)
+
+	if err != nil {
+		helper.ErrorResponse(c, constant.BadRequest, err.Error())
+		return
+	}
+
+	data := gin.H{"is_uploaded": true}
+
+	helper.SuccessResponse(c, "Success Upload Avatar", data)
 }
