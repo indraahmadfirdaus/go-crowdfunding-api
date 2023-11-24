@@ -1,6 +1,11 @@
 package user
 
-import "time"
+import (
+	"crowdfunding-api/auth"
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
 	ID             int       `json:"id"`
@@ -13,4 +18,14 @@ type User struct {
 	Token          string    `json:"token"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	authService := auth.NewAuthService()
+	token, err := authService.GenerateToken(u.ID)
+	if err != nil {
+		return
+	}
+	u.Token = token
+	return
 }

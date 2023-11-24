@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crowdfunding-api/auth"
 	"crowdfunding-api/handler"
 	"crowdfunding-api/user"
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -21,9 +23,12 @@ func main() {
 	userRepo := user.NewRepository(db)
 	userService := user.NewService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
+	authService := auth.NewAuthService()
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
+
+	fmt.Println(authService.GenerateToken(100))
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
