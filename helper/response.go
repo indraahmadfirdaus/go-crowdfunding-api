@@ -43,3 +43,16 @@ func ErrorResponse(c *gin.Context, exception constant.Exception, data interface{
 	}
 	c.JSON(http.StatusBadRequest, jsonRes)
 }
+
+func AbortResponse(c *gin.Context, exception constant.Exception, data interface{}) {
+	meta := Meta{
+		Message: exception.Message,
+		Status:  "fail",
+		Code:    exception.StatusCode,
+	}
+	jsonRes := Response{
+		Meta: meta,
+		Data: data,
+	}
+	c.AbortWithStatusJSON(http.StatusBadRequest, jsonRes)
+}
