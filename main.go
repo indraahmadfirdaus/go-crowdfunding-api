@@ -2,6 +2,7 @@ package main
 
 import (
 	"crowdfunding-api/auth"
+	"crowdfunding-api/campaign"
 	"crowdfunding-api/constant"
 	"crowdfunding-api/handler"
 	"crowdfunding-api/helper"
@@ -25,9 +26,14 @@ func main() {
 	}
 
 	userRepo := user.NewRepository(db)
+	campaignRepo := campaign.NewRepository(db)
+
 	userService := user.NewService(userRepo)
-	userHandler := handler.NewUserHandler(userService)
+	campaignService := campaign.NewService(campaignRepo)
 	authService := auth.NewAuthService()
+
+	userHandler := handler.NewUserHandler(userService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
@@ -38,6 +44,8 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/check-email", userHandler.CheckEmailAvailability)
 	api.POST("/upload-avatar", authMiddleware(authService, userService), userHandler.UpdateAvatar)
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.GET("/campaigns/:id", campaignHandler.GetCampaignDetail)
 
 	router.Run()
 
