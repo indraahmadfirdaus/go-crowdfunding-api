@@ -5,7 +5,6 @@ import (
 	"crowdfunding-api/src/domain/constant"
 	"crowdfunding-api/src/domain/user"
 	"crowdfunding-api/src/helper"
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -22,8 +21,6 @@ func NewCampaignHandler() *campaignHandler {
 
 func (h *campaignHandler) GetCampaigns(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("user_id"))
-
-	fmt.Println("here")
 
 	campaignData, err := h.service.GetCampaigns(userID)
 

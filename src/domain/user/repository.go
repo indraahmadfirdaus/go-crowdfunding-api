@@ -2,8 +2,6 @@ package user
 
 import (
 	"crowdfunding-api/src/kernel"
-
-	"gorm.io/gorm"
 )
 
 type Repository interface {
@@ -14,15 +12,14 @@ type Repository interface {
 }
 
 type repository struct {
-	db *gorm.DB
 }
 
 func NewRepository() *repository {
-	return &repository{db: kernel.DB}
+	return &repository{}
 }
 
 func (r *repository) Save(user User) (User, error) {
-	err := r.db.Create(&user).Error
+	err := kernel.DB.Create(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -32,7 +29,7 @@ func (r *repository) Save(user User) (User, error) {
 
 func (r *repository) FindByEmail(email string) (User, error) {
 	user := User{}
-	err := r.db.Where("email = ?", email).Find(&user).Error
+	err := kernel.DB.Where("email = ?", email).Find(&user).Error
 
 	if err != nil {
 		return user, err
@@ -43,7 +40,7 @@ func (r *repository) FindByEmail(email string) (User, error) {
 
 func (r *repository) FindByID(ID int) (User, error) {
 	user := User{}
-	err := r.db.Where("id = ?", ID).Find(&user).Error
+	err := kernel.DB.Where("id = ?", ID).Find(&user).Error
 
 	if err != nil {
 		return user, err
@@ -53,7 +50,7 @@ func (r *repository) FindByID(ID int) (User, error) {
 }
 
 func (r *repository) Update(user User) (User, error) {
-	err := r.db.Save(&user).Error
+	err := kernel.DB.Save(&user).Error
 	if err != nil {
 		return user, err
 	}

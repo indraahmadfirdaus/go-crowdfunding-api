@@ -3,7 +3,6 @@ package campaign
 import (
 	"crowdfunding-api/src/kernel"
 	"errors"
-	"fmt"
 )
 
 type Repository interface {
@@ -23,7 +22,6 @@ func NewRepository() *repository {
 
 func (r *repository) FindAll() ([]Campaign, error) {
 	var campaigns []Campaign
-	fmt.Println("here 3")
 
 	if kernel.DB == nil {
 		return nil, errors.New("nil database connection")

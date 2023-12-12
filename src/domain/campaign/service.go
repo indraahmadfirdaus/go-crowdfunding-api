@@ -2,7 +2,6 @@ package campaign
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Service interface {
@@ -25,7 +24,6 @@ func (s *service) GetCampaigns(userID int) ([]Campaign, error) {
 	campaigns := []Campaign{}
 
 	if userID == 0 {
-		fmt.Println("here 2")
 		campaignsRes, err := s.repository.FindAll()
 
 		if err != nil {
