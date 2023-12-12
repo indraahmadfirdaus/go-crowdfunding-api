@@ -1,7 +1,7 @@
 package user
 
 import (
-	"crowdfunding-api/auth"
+	"crowdfunding-api/src/domain/auth"
 	"time"
 
 	"gorm.io/gorm"
@@ -20,7 +20,7 @@ type User struct {
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
 	authService := auth.NewAuthService()
 	token, err := authService.GenerateToken(u.ID)
 	if err != nil {

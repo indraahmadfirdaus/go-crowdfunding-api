@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"crowdfunding-api/constant"
+	"crowdfunding-api/src/domain/constant"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

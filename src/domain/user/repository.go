@@ -1,6 +1,10 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"crowdfunding-api/src/kernel"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	Save(user User) (User, error)
@@ -13,8 +17,8 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *repository {
-	return &repository{db}
+func NewRepository() *repository {
+	return &repository{db: kernel.DB}
 }
 
 func (r *repository) Save(user User) (User, error) {

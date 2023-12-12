@@ -1,26 +1,35 @@
 package campaign
 
 import (
-	"gorm.io/gorm"
+	"crowdfunding-api/src/kernel"
+	"errors"
+	"fmt"
 )
 
 type Repository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserID(userID int) ([]Campaign, error)
 	FindById(ID int) (Campaign, error)
+	Save(campaign Campaign) (Campaign, error)
+	Update(campaign Campaign) (Campaign, error)
 }
 
 type repository struct {
-	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) *repository {
-	return &repository{db}
+func NewRepository() *repository {
+	return &repository{}
 }
 
 func (r *repository) FindAll() ([]Campaign, error) {
 	var campaigns []Campaign
-	err := r.db.
+	fmt.Println("here 3")
+
+	if kernel.DB == nil {
+		return nil, errors.New("nil database connection")
+	}
+
+	err := kernel.DB.
 		Preload("CampaignImages", "campaign_images.is_primary = true").
 		Preload("User").
 		Find(&campaigns).
@@ -35,7 +44,7 @@ func (r *repository) FindAll() ([]Campaign, error) {
 
 func (r *repository) FindByUserID(userID int) ([]Campaign, error) {
 	var campaigns []Campaign
-	err := r.db.
+	err := kernel.DB.
 		Where("user_id = ?", userID).
 		Preload("CampaignImages", "campaign_images.is_primary = true").
 		Preload("User").
@@ -51,13 +60,31 @@ func (r *repository) FindByUserID(userID int) ([]Campaign, error) {
 
 func (r *repository) FindById(ID int) (Campaign, error) {
 	var campaign Campaign
-	err := r.db.
+	err := kernel.DB.
 		Where("id = ?", ID).
 		Preload("CampaignImages").
 		Preload("User").
 		Find(&campaign).
 		Error
 
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}
+
+func (r *repository) Save(campaign Campaign) (Campaign, error) {
+	err := kernel.DB.Create(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}
+
+func (r *repository) Update(campaign Campaign) (Campaign, error) {
+	err := kernel.DB.Save(&campaign).Error
 	if err != nil {
 		return campaign, err
 	}

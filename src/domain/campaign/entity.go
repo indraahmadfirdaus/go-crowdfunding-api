@@ -1,10 +1,12 @@
 package campaign
 
 import (
-	"crowdfunding-api/user"
+	"crowdfunding-api/src/domain/user"
+	"fmt"
 	"time"
 
 	"github.com/lib/pq"
+	"gorm.io/gorm"
 )
 
 type Campaign struct {
@@ -31,4 +33,10 @@ type CampaignImage struct {
 	IsPrimary  bool      `json:"is_primary"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+func (c *Campaign) AfterCreate(tx *gorm.DB) (err error) {
+	slugCandidate := fmt.Sprintf("%s %d", c.Name, c.ID)
+	c.Slug = slugCandidate
+	return nil
 }

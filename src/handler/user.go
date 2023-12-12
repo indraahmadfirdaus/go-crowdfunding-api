@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"crowdfunding-api/constant"
-	"crowdfunding-api/helper"
-	"crowdfunding-api/user"
+	"crowdfunding-api/src/domain/constant"
+	"crowdfunding-api/src/domain/user"
+	"crowdfunding-api/src/helper"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,8 @@ type userHandler struct {
 	userService user.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
+func NewUserHandler() *userHandler {
+	userService := user.NewService()
 	return &userHandler{userService: userService}
 }
 
